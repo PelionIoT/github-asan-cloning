@@ -1,0 +1,28 @@
+name: Asan enabled GitHub cloning
+run-name: ${{ github.actor }} GitHub Action to run Asan enabled GitHub cloning
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: asan-cloning-'${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+on:
+  push:
+  workflow_dispatch:
+jobs:
+    asan-cloning:
+        runs-on: ubuntu-22.04
+        env:
+          token: ${{ secrets.ACCESS_TOKEN }}
+          PDM_BINARY_ARTIFACTS_DIR: pdm-binary-artifacts
+          LD_PRELOAD: "/usr/lib/x86_64-linux-gnu/libasan.so.8"
+          ASAN_OPTIONS: "handle_segv=0:detect_leaks=0:log_path=asan-coap-cs.log"
+        steps:
+          - run: git version
+          - uses: actions/checkout@v4
+          - name: Cloning GitHub docs
+            uses: actions/checkout@v4
+            with:
+              repository: GitHub/docs
+              token: ${{ secrets.ACCESS_TOKEN }}
+              path: docs
