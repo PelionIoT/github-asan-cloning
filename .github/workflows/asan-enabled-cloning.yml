@@ -19,9 +19,9 @@ jobs:
           ASAN_OPTIONS: "handle_segv=0:detect_leaks=0:log_path=asan-coap-cs.log"
         steps:
           - run: git version
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v3
           - name: Cloning GitHub docs
-            uses: actions/checkout@v4
+            uses: actions/checkout@v3
             with:
               repository: GitHub/docs
               token: ${{ secrets.ACCESS_TOKEN }}
